@@ -1,0 +1,4 @@
+/* Generated with Figma AI + Lovable design system */
+/* Tailwind via CDN used in HTML, this for custom overrides */
+.hero-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.card-hover:hover { transform: translateY(-4px); transition: all 0.3s; }
