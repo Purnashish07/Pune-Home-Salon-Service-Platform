@@ -64,9 +64,9 @@ class PermissionHandler {
       // Set permission-specific text
       const permissionTexts = {
         camera: {
-          title: 'Camera Permission',
-          message: 'This app would like to access your camera to take photos or record videos for your salon services.',
-          privacy: '🔒 Privacy: Photo will only be used for analysis, will not be saved anywhere.'
+          title: 'Allow Camera Access?',
+          message: 'SalonPune needs camera access to analyze your face shape and show hairstyle previews',
+          privacy: '🔐 Privacy: Your photo will only be used for analysis and will not be saved anywhere. We respect your privacy.'
         },
         microphone: {
           title: 'Microphone Permission',
@@ -136,24 +136,67 @@ class PermissionHandler {
   }
 
   /**
-   * Request camera permission
+   * Request camera permission with comprehensive error handling
+   * @returns {Promise<MediaStream|null>} Camera stream or null if denied/failed
    */
   async requestCamera() {
-    const choice = await this.requestPermission('camera');
-    
-    if (choice === 'deny') {
-      console.log('Camera permission denied');
-      return null;
-    }
-
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { width: { ideal: 1280 }, height: { ideal: 720 } } 
-      });
+      const choice = await this.requestPermission('camera');
+      
+      if (choice === 'deny') {
+        console.log('User denied camera permission');
+        return null;
+      }
+
+      // Request camera with proper constraints for different devices
+      const constraints = {
+        video: {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: 'user'
+        },
+        audio: false
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       return stream;
     } catch (error) {
-      console.error('Failed to access camera:', error);
-      return null;
+      // Handle specific error types
+      let errorMessage = 'Failed to access camera';
+      
+      if (error.name === 'NotAllowedError') {
+        errorMessage = 'Camera permission was denied. Please check your browser settings or try again.';
+        console.warn('Camera permission denied by user or system');
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage = 'No camera device found. Please check if your camera is connected.';
+        console.warn('No camera device detected');
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorMessage = 'Camera is in use by another application. Please close other apps using the camera.';
+        console.warn('Camera is in use by another application');
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage = 'Your camera does not support the required settings. Trying with basic settings...';
+        console.warn('Camera constraints not supported, retrying with basic settings');
+        
+        // Fallback: try with minimal constraints
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          return stream;
+        } catch (fallbackError) {
+          console.error('Fallback camera access also failed:', fallbackError);
+          return null;
+        }
+      } else if (error.name === 'PermissionDeniedError') {
+        errorMessage = 'Camera access requires HTTPS or localhost. Please use a secure connection.';
+        console.warn('HTTPS/localhost required for camera access');
+      } else if (error.name === 'TypeError') {
+        errorMessage = 'getUserMedia API is not supported in this browser.';
+        console.warn('getUserMedia not supported');
+      }
+      
+      console.error('Camera access error:', error.name, error.message);
+      
+      // Return error message so caller can display it
+      return { error: errorMessage };
     }
   }
 
