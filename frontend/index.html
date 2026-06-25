@@ -1230,17 +1230,17 @@
   <nav class="fixed w-full z-40 glass border-b border-gray-200/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16 md:h-20">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-shrink-0">
           <div
-            class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0">
             <i class="fa-solid fa-spa text-white text-lg"></i>
           </div>
           <div>
-            <h1 class="text-xl md:text-2xl font-bold font-display text-gray-900 dark:text-white">Pune Home Salon</h1>
+            <h1 class="text-xl md:text-2xl font-bold font-display text-gray-900 dark:text-white whitespace-nowrap">Pune Home Salon</h1>
           </div>
         </div>
 
-        <nav class="flex space-x-8 items-center">
+        <nav class="hidden md:flex space-x-8 items-center">
           <a href="#home"
             class="text-gray-900 font-semibold hover:text-pink-600 hover:scale-105 transition duration-200">Home</a>
           <a href="#services"
@@ -3282,10 +3282,31 @@
         });
       }
 
-      // Bahar click karne pe dropdown band
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          mobileMenu.classList.toggle('hidden');
+        });
+
+        // Hide mobile menu on clicking any link inside it
+        mobileMenu.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function () {
+            mobileMenu.classList.add('hidden');
+          });
+        });
+      }
+
+      // Bahar click karne pe dropdown and mobile menu band
       document.addEventListener('click', function () {
         if (profileDropdown) {
           profileDropdown.classList.add('hidden');
+        }
+        if (mobileMenu) {
+          mobileMenu.classList.add('hidden');
         }
       });
 
