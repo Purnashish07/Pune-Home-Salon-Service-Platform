@@ -12,7 +12,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -54,15 +54,16 @@ def chat():
             }
         )
 
-        if response.status_code!= 200:
-            return jsonify({"reply": 'AI is a bit busy right now Please book directly using "Book Now" above!'}), 500
+        if response.status_code != 200:
+            print(f"Groq API Error: Status {response.status_code}, Response: {response.text}")
+            return jsonify({"reply": 'AI is a bit busy right now, Please book directly using "Book Now" above!'}), 500
 
         result = response.json()
         reply = result['choices'][0]['message']['content']
         return jsonify({"reply": reply})
 
     except Exception as e:
-        print("Error:", e)
+        print("Exception in chat endpoint:", e)
         return jsonify({"reply": 'AI is a bit busy right now, Please book directly using "Book Now" above!'}), 500
 
 @app.route('/api/bookings', methods=['POST'])
