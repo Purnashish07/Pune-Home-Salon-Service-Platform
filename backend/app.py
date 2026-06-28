@@ -4,11 +4,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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")
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -18,10 +22,10 @@ def chat():
         image = data.get('image', None)
 
         messages = [
-            {"role": "system", "content": """You are Pune Home Salon assistant.python -m http.server 8000
+            {"role": "system", "content": """You are Pune Home Salon assistant.
             Prices: Haircut ₹399, Facial ₹699, Manicure ₹499, Pedicure ₹599, Bridal ₹4999.
             Areas: Kothrud, Baner, Wakad, Viman Nagar.
-            Reply in Hinglish, max 2 lines."""},
+            Reply in the same language as the user's query (Hindi, English, or Hinglish). Keep response short and max 2 lines."""},
             {"role": "user", "content": message}
         ]
 
@@ -31,9 +35,9 @@ def chat():
                 {"type": "text", "text": message or "Beauty tips do"},
                 {"type": "image_url", "image_url": {"url": image}}
             ]
-            model = "llama-3.2-90b-vision-preview"
+            model = "llama-3.2-11b-vision-preview"
         else:
-            model = "llama-3.1-70b-versatile"
+            model = "llama-3.3-70b-versatile"
 
         # Groq API call
         response = requests.post(
