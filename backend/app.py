@@ -22,7 +22,7 @@ def chat():
         image = data.get('image', None)
 
         messages = [
-            {"role": "system", "content": """You are Pune Home Salon assistant.python -m http.server 8000
+            {"role": "system", "content": """You are Pune Home Salon assistant.
             Prices: Haircut ₹399, Facial ₹699, Manicure ₹499, Pedicure ₹599, Bridal ₹4999.
             Areas: Kothrud, Baner, Wakad, Viman Nagar.
             Reply in the same language as the user's query (Hindi, English, or Hinglish). Keep response short and max 2 lines."""},
