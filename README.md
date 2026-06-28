@@ -1,5 +1,5 @@
 🚀 Live Demo
-[View Website](https://pune-home-salon-service-platform.vercel.app)
+[View Website](https://pune-home-salon-service-platform-14.vercel.app/)
 
 # Pune Home Salon Service Platform
 ## SuperXgen AI Startup Buildathon 2026 - Submission
